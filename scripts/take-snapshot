@@ -1,0 +1,13 @@
+#!/bin/bash
+
+MACHINE_NAME="$1"
+SNAPSHOT_NAME="$2"
+
+[ -n "$MACHINE_NAME" ] || exit
+[ -n "$SNAPSHOT_NAME" ] || exit
+
+if ! \
+    vagrant snapshot list "$MACHINE_NAME" \
+    | grep -q "$SNAPSHOT_NAME"; then
+    vagrant snapshot save "$MACHINE_NAME" "$SNAPSHOT_NAME"
+fi

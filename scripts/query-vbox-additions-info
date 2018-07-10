@@ -1,0 +1,12 @@
+#!/bin/bash
+
+MOD_INFO="$(modinfo vboxguest)"
+
+if [ $? ]; then
+  echo "$MOD_INFO" \
+  | grep -iw version \
+  | sed "s/^.*version:\s\+\(.\+\)/\1/" \
+  | echo "VirtualBox guest additions version: $(cat -)"
+else
+  echo "VirtualBox guest additionals are not installed" >&2
+fi

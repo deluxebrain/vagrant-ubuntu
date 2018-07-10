@@ -1,0 +1,48 @@
+#!/bin/bash
+
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"; $(vagrant user env -u)' EXIT
+
+MACHINE_NAME="$1"
+GUEST_HOSTNAME="$2"
+SSH_CONFIG_PATH="$3"
+SSH_CONFIG_INCLUDE_PATH="$4"
+
+[ -n "$GUEST_HOSTNAME" ] || exit
+[ -n "$MACHINE_NAME" ] || exit
+[ -n "$SSH_CONFIG_PATH" ] || exit
+[ -n "$SSH_CONFIG_INCLUDE_PATH" ] || exit
+
+if [ -f "$SSH_CONFIG_PATH" ]; then
+  # Use \cp to use non-aliased cp to allow non-interactive forced copy
+  \cp -f "$SSH_CONFIG_PATH" \
+    "${SSH_CONFIG_PATH}.bak" || exit
+fi
+
+if ! grep -q -F "$SSH_CONFIG_INCLUDE_PATH" \
+  "$SSH_CONFIG_PATH"; then
+  printf "INCLUDE $SSH_CONFIG_INCLUDE_PATH/*\n\n" \
+    | cat - "$SSH_CONFIG_PATH" \
+    > "$TMPDIR/ssh_config.tmp" || exit
+
+    mv -f "$TMPDIR/ssh_config.tmp" "$SSH_CONFIG_PATH" || exit
+fi
+
+if ! [ -d "$SSH_CONFIG_INCLUDE_PATH" ]; then
+  mkdir "$SSH_CONFIG_INCLUDE_PATH" || exit
+fi
+
+if [ -f "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" ]; then
+  rm -rf "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
+fi
+
+# awk: match 4th column on text "running" and print out the 5th ( path )
+for VAGRANT_INSTANCE_PATH in $(vagrant global-status \
+  | grep -E "/\w+" \
+  | awk '$4 == "running" { print $5 }')
+do (
+  cd "$VAGRANT_INSTANCE_PATH" || exit
+  vagrant ssh-config "$MACHINE_NAME" \
+  | awk '!/insecure/' \
+  >> "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
+) done

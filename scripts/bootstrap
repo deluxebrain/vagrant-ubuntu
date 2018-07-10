@@ -1,0 +1,18 @@
+#!/bin/sh
+
+TIMEZONE="$1"
+
+[ -n "$TIMEZONE" ] || exit
+
+apt-get update
+
+# Ensure that the upgrade is performed non-interactively
+# https://github.com/chef/bento/issues/661
+DEBIAN_FRONTEND=noninteractive apt-get \
+  -y \
+  -o Dpkg::Options::="--force-confdef" \
+  -o Dpkg::Options::="--force-confold" \
+  upgrade
+
+# Personalization
+sudo timedatectl set-timezone "$TIMEZONE"

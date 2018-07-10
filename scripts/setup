@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Boxes
+#
+
+# Official Ubuntu distributions
+vagrant box add ubuntu/xenial64
+vagrant box add ubuntu/bionic64
+
+# "Dummy" box used by AWS provider
+vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+
+# Plugins
+#
+
+# Shared common package cache
+vagrant plugin install vagrant-cachier
+
+# Support for external dotfile-style configuration
+vagrant plugin install nugrant
+
+# Install and update VirtualBox guest additions
+vagrant plugin install vagrant-vbguest
+
+# Manage host hosts file
+vagrant plugin install vagrant-hostmanager
+
+# AWS providers
+vagrant plugin install vagrant-aws
+
+# Used to get metadata around aws instances
+# E.g. vagrant awsinfo -m [MACHINE] -p (pretty print)
+vagrant plugin install vagrant-awsinfo
+
+
+
+
+

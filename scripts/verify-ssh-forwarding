@@ -1,0 +1,13 @@
+#!/bin/bash
+
+ssh-keyscan -t rsa github.com >> "${HOME}/.ssh/known_hosts" 2>/dev/null
+
+IDENTITY="$(ssh -T git@github.com 2>&1 | sed -n "s/^Hi\s\(.\+\)\!.*$/\1/p")"
+
+if [ -n "$IDENTITY" ]; then
+  echo "SSH Forwarding OK: Authenticated against GitHub using $IDENTITY"
+else
+  echo "SSH Forwarding FAIL: Unable to authenticate against GitHub" >&2
+  echo "*** Ensure that your private key has been added to the ssh-agent" >&2
+  echo "*** Ensure your sshd config is set to permit agent forwarding" >&2
+fi
