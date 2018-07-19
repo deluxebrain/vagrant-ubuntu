@@ -34,7 +34,8 @@ module VagrantUbuntu
                         aws.security_groups = machine_config.aws.security_groups
                         aws.tags = machine_config.aws.tags
                         aws.user_data = render_user_data(config.user.ssh.username,
-                            File.expand_path(config.user.ssh.public_key_path))
+                            File.expand_path(config.user.ssh.public_key_path),
+                            config.user.meta.host_templates_path)
                     end
 
                     PROVIDERS[:common].provision(config,
@@ -100,9 +101,9 @@ module VagrantUbuntu
                 return image
             end
 
-            def self.render_user_data(username, pub_key_path)
+            def self.render_user_data(username, pub_key_path, templates_path)
                 pub_key = File.read(pub_key_path)
-                template = ERB.new File.read("templates/user_data.erb")
+                template = ERB.new File.read("#{templates_path}/user_data.erb")
                 state = OpenStruct.new(
                     user_name: "#{username}",
                     ssh_pub_key: "#{pub_key}")

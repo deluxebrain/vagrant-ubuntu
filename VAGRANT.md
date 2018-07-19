@@ -4,9 +4,10 @@
 
 ### Environment varialbes
 
-VAGRANT_HOME:
-Location of global state including box files.
-Defaults to ~/.vagrant.d.
+- VAGRANT_HOME:
+
+    Location of global state including box files.
+    Defaults to ~/.vagrant.d.
 
 ## Boxes
 
@@ -29,50 +30,62 @@ The following are run from within a Vagrant environment:
 
 ## Workflow
 
-Validate Vagrantfile:
+Note that in multi-machine setups each command will need to be prefixed with the machine name.
+
+```sh
+# Validate Vagrantfile
 vagrant validate
 
-Create and configure guest machine:
+# Create and configure guest machine
 vagrant up
 
-SSH into running Vagrant machine as the vagrant user:
+# SSH into running Vagrant machine as the vagrant user
 vagrant ssh
 
-Equivalent to halt followed by up. Used to run in any changes to the Vagrantfile:
+# Equivalent to halt followed by up
+# Used to run in any changes to the Vagrantfile:
 vagrant reload
 
-Shut down running guest. Bring back up with vagrant up:
+# Shut down running guest
+# Bring back up with vagrant up:
 vagrant halt [--force]
 
-Shutdown and destroy running guest:
-vagrant destroy # --force
+# Shutdown and destroy running guest
+vagrant destroy [--force]
+```
 
 ## Provisioning
 
-Re-run all provisioners:
+```sh
+# Re-run all provisioners
 vagrant provision
 
-Run specific provisioner:
+# Run specific provisioner
 vagrant provision --provision-with [provisioner]
+```
 
 ## Snapshots
 
-Push snapshot onto the stack:
+```sh
+# Push snapshot onto the stack
 vagrant snapshot push
 vagrant snapshot save [NAME]
 
-Pop snapshot:
+# Pop snapshot
 vagrant snapshot pop --[no-]provision, --no-delete
 vagrant snapshot restore [NAME] --[no-]provision
 
-Management:
+# Snapshot management
 vagrant snapshot delete [NAME]
 vagrant snapshot list
+```
 
 ## Vagrant introspection
 
-Show status of current environment:
+```sh
+# Show status of current environment
 vagrant status
 
-List all active Vagrant environments:
+# List all active Vagrant environments
 vagrant global-status
+```

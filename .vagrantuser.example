@@ -1,0 +1,76 @@
+common:
+  vbox_settings:
+    auto_update_guest_additions: false
+  guest:
+    timezone: 'Europe/London'
+  dotfiles:
+    setup_dotfiles: true
+    install_cmd: 'Repos/other/dotfiles/install -p -- -b'
+  shares:
+    vagrant:
+      source: './'
+      destination: '/vagrant'
+  files:
+    gitconfig:
+      source: '~/.gitconfig'
+      destination: '~/.gitconfig'
+    gitlocal:
+      source: '~/.gitlocal'
+      destination: '~/.gitlocal'
+    aws:
+      source: '~/.aws'
+      destination: '~/.aws'
+  repos:
+    dotfiles:
+      remote: 'git@github.com:deluxebrain/dotfiles.git'
+      local_path: 'Repos/other'
+machines:
+  vbox:
+    provider: :vbox
+    guest:
+      box: 'ubuntu/bionic64'
+      hostname: 'ubuntu-vbox'
+    vbox_settings:
+      cpus: 2
+      ram: 4096
+      gui: false
+    ssh:
+      port: 2223
+    networking:
+      forwarding:
+        jupyter:
+          guest: 8888
+          host: 8888
+          auto_correct: false
+    snapshot:
+      take_snapshot: true
+      snapshot_name: 'baseline-local'
+  aws:
+    provider: :aws
+    guest:
+      box: 'dummy'
+      hostname: 'ubuntu-aws'
+    aws:
+      image_name: 'ubuntu-bionic-18.04'
+      profile: 'vagrant'
+      instance_type: '[INSTANCE_TYPE e.g. m3.medium, p2.xlarge]'
+      subnet_id: '[SUBNET_ID]'
+      security_groups:
+        - '[SECURITY_GROUP]'
+      tags:
+        Name: 'vagrant'
+host:
+  manage_hosts: true
+  setup_ssh_config: true
+  ssh_config_path: '~/.ssh/config'
+  ssh_config_include_path: '~/.ssh/config.d'
+ssh:
+  username: 'vagrant'
+  use_own_key: true
+  vagrant_insecure_key_path: '~/.vagrant.d/insecure_private_key'
+  private_key_path: '~/.ssh/id_rsa'
+  public_key_path: '~/.ssh/id_rsa.pub'
+meta:
+  host_script_path: './scripts'
+  guest_script_path: '/vagrant/scripts'
+

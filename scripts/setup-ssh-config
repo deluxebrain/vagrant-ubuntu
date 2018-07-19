@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR"; $(vagrant user env -u)' EXIT
+trap 'rm -rf "$TMPDIR"' EXIT
 
 MACHINE_NAME="$1"
 GUEST_HOSTNAME="$2"
@@ -17,10 +17,11 @@ if [ -f "$SSH_CONFIG_PATH" ]; then
   # Use \cp to use non-aliased cp to allow non-interactive forced copy
   \cp -f "$SSH_CONFIG_PATH" \
     "${SSH_CONFIG_PATH}.bak" || exit
+else
+  touch "$SSH_CONFIG_PATH"
 fi
 
-if ! grep -q -F "$SSH_CONFIG_INCLUDE_PATH" \
-  "$SSH_CONFIG_PATH"; then
+if ! grep -q -F "$SSH_CONFIG_INCLUDE_PATH" "$SSH_CONFIG_PATH"; then
   printf "INCLUDE $SSH_CONFIG_INCLUDE_PATH/*\n\n" \
     | cat - "$SSH_CONFIG_PATH" \
     > "$TMPDIR/ssh_config.tmp" || exit
@@ -42,7 +43,7 @@ for VAGRANT_INSTANCE_PATH in $(vagrant global-status \
   | awk '$4 == "running" { print $5 }')
 do (
   cd "$VAGRANT_INSTANCE_PATH" || exit
-  vagrant ssh-config "$MACHINE_NAME" \
+  vagrant ssh-config --host "$GUEST_HOSTNAME" "$MACHINE_NAME" \
   | awk '!/insecure/' \
   >> "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
 ) done

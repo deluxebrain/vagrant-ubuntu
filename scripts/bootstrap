@@ -1,8 +1,4 @@
-#!/bin/sh
-
-TIMEZONE="$1"
-
-[ -n "$TIMEZONE" ] || exit
+#!/bin/bash
 
 apt-get update
 
@@ -13,6 +9,3 @@ DEBIAN_FRONTEND=noninteractive apt-get \
   -o Dpkg::Options::="--force-confdef" \
   -o Dpkg::Options::="--force-confold" \
   upgrade
-
-# Personalization
-sudo timedatectl set-timezone "$TIMEZONE"

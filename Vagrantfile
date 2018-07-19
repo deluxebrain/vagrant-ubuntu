@@ -61,7 +61,8 @@ Vagrant.configure('2') do |config|
   config.user.common.shares.each do |key, value|
     config.vm.synced_folder File.expand_path(value[:source]),
       value[:destination],
-      type: "rsync"
+      type: "rsync",
+      rsync__auto: true
   end
 
   # File copies
@@ -72,26 +73,28 @@ Vagrant.configure('2') do |config|
   end
 
   # Repos
-  if config.user.common.repos.any?
-    # Add github to known_hosts else git will return non-zero exit code
-    script = <<-SCRIPT
-    ssh-keyscan -t rsa github.com >> "${HOME}/.ssh/known_hosts" 2>/dev/null
-    SCRIPT
-    config.vm.provision "setup_known_hosts",
-      type: "shell",
-      inline: script,
-      privileged: false
-
-    config.user.common.repos.each do |key, value|
+  if config.user.common.key?("repos")
+    if config.user.common.repos.any?
+      # Add github to known_hosts else git will return non-zero exit code
       script = <<-SCRIPT
-      mkdir -p "#{value.local_path}" || exit
-      cd "$_" || exit
-      git clone #{value.remote}
+      ssh-keyscan -t rsa github.com >> "${HOME}/.ssh/known_hosts" 2>/dev/null
       SCRIPT
-      config.vm.provision "repos",
+      config.vm.provision "setup_known_hosts",
         type: "shell",
         inline: script,
         privileged: false
+
+      config.user.common.repos.each do |key, value|
+        script = <<-SCRIPT
+        mkdir -p "#{value.local_path}" || exit
+        cd "$_" || exit
+        git clone #{value.remote}
+        SCRIPT
+        config.vm.provision "repos",
+          type: "shell",
+          inline: script,
+          privileged: false
+      end
     end
   end
 
@@ -99,16 +102,32 @@ Vagrant.configure('2') do |config|
   config.vm.provision "bootstrap",
     type: "shell",
     path: File.join(config.user.meta.host_script_path, "bootstrap"),
+    privileged: true
+
+  # Timezone
+  config.vm.provision "timezone",
+    type: "shell",
+    path: File.join(config.user.meta.host_script_path, "setup-timezone"),
     privileged: true,
     args: [
       "#{config.user.common.guest.timezone}"
     ]
 
-  # Setup dotfiles
-  if config.user.common.dotfiles.setup_dotfiles
-    config.vm.provision "dotfiles",
+  # Desktop
+  if config.user.common.install_desktop
+    config.vm.provision "desktop",
       type: "shell",
-      inline: config.user.common.dotfiles.install_cmd,
-      privileged: false
+      path: File.join(config.user.meta.host_script_path, "setup-desktop"),
+      privileged: true
+  end
+
+  # Setup dotfiles
+  if config.user.common.key?("dotfiles")
+    if config.user.common.dotfiles.setup_dotfiles
+      config.vm.provision "dotfiles",
+        type: "shell",
+        inline: config.user.common.dotfiles.install_cmd,
+        privileged: false
+    end
   end
 end

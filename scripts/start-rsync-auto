@@ -1,0 +1,12 @@
+#!/bin/bash
+
+MACHINE_NAME="$1"
+[ -n "$MACHINE_NAME" ] || exit
+
+PID="$(pgrep -f "vagrant rsync-auto $MACHINE_NAME" \
+    | xargs -I {} ps -c {} \
+    | grep vagrant \
+    | cut -d' ' -f2)"
+[ -n "$PID" ] && kill "$PID"
+
+vagrant rsync-auto "$MACHINE_NAME" >/dev/null &

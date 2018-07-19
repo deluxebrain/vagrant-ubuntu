@@ -107,8 +107,10 @@ Installation of this project as a sidecar into a parent project is as follows:
 
 4. Update the configuration file
 
-    The paths will all need updating as per the examples.
-    I like to update the `hostname` parameter to the name of the host project so I can `ssh [project]` to access the development environment.
+    Ensure that the following are all correct, remembering to factory in the submodule directory:
+    - host_script_path
+    - guest_script_path
+    - host_templates_path
 
 5. Copy / merge the sidecar gitignore into place
 

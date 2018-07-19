@@ -20,6 +20,28 @@ module VagrantUbuntu
                         }
                     end
                 end
+
+                vagrant.trigger.after :up do |trigger|
+                    trigger.info = "INFO: Starting rsync-auto"
+                    trigger.run = {
+                        path: File.join(vagrant.user.meta.host_script_path,
+                            "start-rsync-auto"),
+                        args: [
+                            "#{machine_name}"
+                        ]
+                    }
+                end
+
+                vagrant.trigger.after :halt do |trigger|
+                    trigger.info = "INFO: Stopping rsync-auto"
+                    trigger.run = {
+                        path: File.join(vagrant.user.meta.host_script_path,
+                            "stop-rsync-auto"),
+                        args: [
+                            "#{machine_name}"
+                        ]
+                    }
+                end
             end
         end
     end
