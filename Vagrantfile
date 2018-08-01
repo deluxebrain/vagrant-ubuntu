@@ -1,13 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
 require_relative 'lib/vagrant-ubuntu/providers/common/provider'
 require_relative 'lib/vagrant-ubuntu/providers/vbox/provider'
-require_relative 'lib/vagrant-ubuntu/providers/aws/provider'
+#require_relative 'lib/vagrant-ubuntu/providers/aws/provider'
+
+user_config = YAML.load_file('.vagrantuser')
 
 PROVIDERS = {
   :common => VagrantUbuntu::Providers::Common,
-  :aws => VagrantUbuntu::Providers::Aws,
-  :vbox => VagrantUbuntu::Providers::VirtualBox
+  :vbox => VagrantUbuntu::Providers::VirtualBox,
+  #:aws => VagrantUbuntu::Providers::Aws
 }
 
 Vagrant.configure('2') do |config|

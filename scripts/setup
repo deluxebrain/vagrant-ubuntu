@@ -26,11 +26,7 @@ vagrant plugin install vagrant-vbguest
 vagrant plugin install vagrant-hostmanager
 
 # AWS providers
-vagrant plugin install vagrant-aws
-
-# Used to get metadata around aws instances
-# E.g. vagrant awsinfo -m [MACHINE] -p (pretty print)
-vagrant plugin install vagrant-awsinfo
+#vagrant plugin install vagrant-aws
 
 
 
