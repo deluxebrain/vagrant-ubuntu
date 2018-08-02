@@ -2,7 +2,7 @@ module VagrantUbuntu
     module Providers
         module VirtualBox
 
-            def self.provision(vagrant, machine_name, machine_config)
+            def self.provision(vagrant, user_config, machine_name, machine_config)
 
                 vagrant.vm.define machine_name do |config|
 
@@ -31,7 +31,7 @@ module VagrantUbuntu
                     config.trigger.after :up do |trigger|
                         trigger.info = "INFO: Getting vbox-additions version information"
                         trigger.run_remote = {
-                        inline: File.join(config.user.meta.guest_script_path, "query-vbox-additions-info")
+                        inline: File.join(user_config.meta.guest_script_path, "query-vbox-additions-info")
                         }
                     end
 
@@ -51,7 +51,7 @@ module VagrantUbuntu
                     end
 
                     # Hypervisor configuration
-                    config.vbguest.auto_update = config.user.common.vbox_settings.auto_update_guest_additions
+                    config.vbguest.auto_update = user_config.common.vbox_settings.auto_update_guest_additions
                     config.vbguest.no_remote = false
                     config.vm.provider 'virtualbox' do |vbox, override|
                         vbox.name = machine_config.guest.hostname # vbox ui title
@@ -61,6 +61,7 @@ module VagrantUbuntu
                     end
 
                     PROVIDERS[:common].provision(config,
+                        user_config,
                         machine_name,
                         machine_config)
                 end

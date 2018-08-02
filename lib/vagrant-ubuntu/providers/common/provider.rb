@@ -2,7 +2,7 @@ module VagrantUbuntu
     module Providers
         module Common
 
-            def self.provision(vagrant, machine_name, machine_config)
+            def self.provision(vagrant, user_config, machine_name, machine_config)
 
                 # Setup host ssh config
                 vagrant.trigger.after :up do |trigger|

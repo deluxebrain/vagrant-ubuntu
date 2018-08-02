@@ -6,7 +6,7 @@ require 'iniparse'
 module VagrantUbuntu
     module Providers
         module Aws
-            def self.provision(vagrant, machine_name, machine_config)
+            def self.provision(vagrant, user_config, machine_name, machine_config)
 
                 vagrant.vm.define machine_name do |config|
 
@@ -22,7 +22,7 @@ module VagrantUbuntu
                     # Keypair configuration
                     config.ssh.insert_key = false
                     config.ssh.private_key_path = File.expand_path(
-                        config.user.ssh.private_key_path)
+                        user_config.ssh.private_key_path)
 
                     config.vm.provider :aws do |aws, override|
                         aws.ami = image.id
@@ -33,12 +33,13 @@ module VagrantUbuntu
                         aws.associate_public_ip = false
                         aws.security_groups = machine_config.aws.security_groups
                         aws.tags = machine_config.aws.tags
-                        aws.user_data = render_user_data(config.user.ssh.username,
-                            File.expand_path(config.user.ssh.public_key_path),
-                            config.user.meta.host_templates_path)
+                        aws.user_data = render_user_data(user_config.ssh.username,
+                            File.expand_path(user_config.ssh.public_key_path),
+                            user_config.meta.host_templates_path)
                     end
 
                     PROVIDERS[:common].provision(config,
+                        user_config,
                         machine_name,
                         machine_config)
                 end
