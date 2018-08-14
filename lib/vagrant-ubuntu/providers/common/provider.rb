@@ -4,7 +4,6 @@ module VagrantUbuntu
 
             def self.provision(vagrant, user_config, machine_name, machine_config)
 
-                # Setup host ssh config
                 vagrant.trigger.after :up do |trigger|
                     if vagrant.user.host.setup_ssh_config
                         trigger.info = "INFO: Setting up ssh-config"
