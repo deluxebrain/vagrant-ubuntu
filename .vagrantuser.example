@@ -1,6 +1,7 @@
 common:
+  install_desktop: false
   vbox_settings:
-    auto_update_guest_additions: false
+    auto_update_guest_additions: true
   guest:
     timezone: 'Europe/London'
   dotfiles:
@@ -31,9 +32,9 @@ machines:
       box: 'ubuntu/bionic64'
       hostname: 'ubuntu-vbox'
     vbox_settings:
+      gui: false
       cpus: 2
       ram: 4096
-      gui: false
     ssh:
       port: 2223
     networking:
@@ -45,20 +46,6 @@ machines:
     snapshot:
       take_snapshot: true
       snapshot_name: 'baseline-local'
-  aws:
-    provider: :aws
-    guest:
-      box: 'dummy'
-      hostname: 'ubuntu-aws'
-    aws:
-      image_name: 'ubuntu-bionic-18.04'
-      profile: 'vagrant'
-      instance_type: '[INSTANCE_TYPE e.g. m3.medium, p2.xlarge]'
-      subnet_id: '[SUBNET_ID]'
-      security_groups:
-        - '[SECURITY_GROUP]'
-      tags:
-        Name: 'vagrant'
 host:
   manage_hosts: true
   setup_ssh_config: true
@@ -72,5 +59,6 @@ ssh:
   public_key_path: '~/.ssh/id_rsa.pub'
 meta:
   host_script_path: './scripts'
+  host_templates_path: './templates'
   guest_script_path: '/vagrant/scripts'
 

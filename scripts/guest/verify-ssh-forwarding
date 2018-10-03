@@ -1,7 +1,9 @@
 #!/bin/bash
 
+# Authorize github
 ssh-keyscan -t rsa github.com >> "${HOME}/.ssh/known_hosts" 2>/dev/null
 
+# Verify ssh connectivity to github
 IDENTITY="$(ssh -T git@github.com 2>&1 | sed -n "s/^Hi\s\(.\+\)\!.*$/\1/p")"
 
 if [ -n "$IDENTITY" ]; then

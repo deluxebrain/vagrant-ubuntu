@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# chmod 700 ~/.ssh ~/.ssh/config.d
+# chmod 600 ~/.ssh/*.pem
+# chmod 644 ~/.ssh/config ~/.ssh/config.d/config
+
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
@@ -19,6 +23,7 @@ if [ -f "$SSH_CONFIG_PATH" ]; then
     "${SSH_CONFIG_PATH}.bak" || exit
 else
   touch "$SSH_CONFIG_PATH"
+  chmod 644 "$SSH_CONFIG_PATH"
 fi
 
 if ! grep -q -F "$SSH_CONFIG_INCLUDE_PATH" "$SSH_CONFIG_PATH"; then
@@ -27,14 +32,16 @@ if ! grep -q -F "$SSH_CONFIG_INCLUDE_PATH" "$SSH_CONFIG_PATH"; then
     > "$TMPDIR/ssh_config.tmp" || exit
 
     mv -f "$TMPDIR/ssh_config.tmp" "$SSH_CONFIG_PATH" || exit
+    chmod 644 "$SSH_CONFIG_PATH"
 fi
 
 if ! [ -d "$SSH_CONFIG_INCLUDE_PATH" ]; then
   mkdir "$SSH_CONFIG_INCLUDE_PATH" || exit
+  chmod 700 "$SSH_CONFIG_INCLUDE_PATH"
 fi
 
 if [ -f "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" ]; then
-  rm -rf "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
+  rm -f "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
 fi
 
 # awk: match 4th column on text "running" and print out the 5th ( path )
@@ -46,4 +53,5 @@ do (
   vagrant ssh-config --host "$GUEST_HOSTNAME" "$MACHINE_NAME" \
   | awk '!/insecure/' \
   >> "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME" || exit
+  chmod 644 "$SSH_CONFIG_INCLUDE_PATH/$GUEST_HOSTNAME"
 ) done

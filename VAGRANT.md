@@ -2,7 +2,7 @@
 
 ## Configuration
 
-### Environment varialbes
+### Environment variables
 
 - VAGRANT_HOME:
 
@@ -20,6 +20,7 @@ The following can be run from anywhere and affect Vagrant globally:
 - vagrant box list
 - vagrant box add [NAME]
 - vagrant box remove [NAME]
+- vagrant box prune # remove old versions of installed boxes
 
 ### Local box administration
 
@@ -30,7 +31,7 @@ The following are run from within a Vagrant environment:
 
 ## Workflow
 
-Note that in multi-machine setups each command will need to be prefixed with the machine name.
+Note that in multi-machine setups each command will need to be postfixed with the machine name.
 
 ```sh
 # Validate Vagrantfile
@@ -39,11 +40,11 @@ vagrant validate
 # Create and configure guest machine
 vagrant up
 
-# SSH into running Vagrant machine as the vagrant user
+# Ssh into running Vagrant machine as the vagrant user
 vagrant ssh
 
-# Equivalent to halt followed by up
 # Used to run in any changes to the Vagrantfile:
+# Equivalent to halt followed by up
 vagrant reload
 
 # Shut down running guest

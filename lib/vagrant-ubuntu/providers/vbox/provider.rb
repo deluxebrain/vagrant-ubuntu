@@ -31,7 +31,7 @@ module VagrantUbuntu
                     config.trigger.after :up do |trigger|
                         trigger.info = "INFO: Getting vbox-additions version information"
                         trigger.run_remote = {
-                        inline: File.join(user_config.meta.guest_script_path, "query-vbox-additions-info")
+                        inline: File.join(user_config.meta.guest_script_path, "guest/query-vbox-additions-info")
                         }
                     end
 
@@ -40,8 +40,8 @@ module VagrantUbuntu
                         if machine_config.snapshot.take_snapshot
                             trigger.info = "INFO: Taking initial snapshot"
                             trigger.run = {
-                                path: File.join(vagrant.user.meta.host_script_path,
-                                    "take-snapshot"),
+                                path: File.join(user_config.meta.host_script_path,
+                                    "host/take-snapshot"),
                                 args: [
                                     "#{machine_name}",
                                     "#{machine_config.snapshot.snapshot_name}"

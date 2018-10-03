@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
 require_relative 'lib/vagrant-ubuntu/providers/common/provider'
 require_relative 'lib/vagrant-ubuntu/providers/vbox/provider'
 
@@ -8,7 +9,9 @@ PROVIDERS = {
   :vbox => VagrantUbuntu::Providers::VirtualBox
 }
 
-user_config = JSON.parse(YAML::load_file('.vagrantuser').to_json,
+# Load user configuration as an OpenStruct object
+user_config = JSON.parse(
+  YAML::load_file('.vagrantuser').to_json,
   object_class: OpenStruct)
 
 Vagrant.configure('2') do |config|
@@ -56,7 +59,7 @@ Vagrant.configure('2') do |config|
   config.vm.provision "verify_ssh_forwarding",
     type: "shell",
     inline: File.join(user_config.meta.guest_script_path,
-      "verify-ssh-forwarding"),
+      "guest/verify-ssh-forwarding"),
     privileged: false
 
   # Directory shares
@@ -103,13 +106,13 @@ Vagrant.configure('2') do |config|
   # OS bootstrapping
   config.vm.provision "bootstrap",
     type: "shell",
-    path: File.join(user_config.meta.host_script_path, "bootstrap"),
+    path: File.join(user_config.meta.host_script_path, "guest/bootstrap"),
     privileged: true
 
   # Timezone
   config.vm.provision "timezone",
     type: "shell",
-    path: File.join(user_config.meta.host_script_path, "setup-timezone"),
+    path: File.join(user_config.meta.host_script_path, "guest/setup-timezone"),
     privileged: true,
     args: [
       "#{user_config.common.guest.timezone}"
@@ -119,7 +122,7 @@ Vagrant.configure('2') do |config|
   if user_config.common.install_desktop
     config.vm.provision "desktop",
       type: "shell",
-      path: File.join(user_config.meta.host_script_path, "setup-desktop"),
+      path: File.join(user_config.meta.host_script_path, "guest/setup-desktop"),
       privileged: true
   end
 

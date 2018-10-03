@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Boxes
+
+## Official Ubuntu distributions
+vagrant box add ubuntu/bionic64
+
+## "Dummy" box used by AWS provider
+vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box
+
+# Plugins
+
+## Shared common package cache
+vagrant plugin install vagrant-cachier
+
+## Install and update VirtualBox guest additions
+vagrant plugin install vagrant-vbguest
+
+## Manage host hosts file
+vagrant plugin install vagrant-hostmanager

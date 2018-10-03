@@ -1,7 +1,5 @@
 #!/bin/bash
 
 TIMEZONE="$1"
-
 [ -n "$TIMEZONE" ] || exit
-
 sudo timedatectl set-timezone "$TIMEZONE"
