@@ -39,7 +39,8 @@ An example of this file is given in the `.vagrantuser.example` file.
 
 ### Host ssh keypair
 
-The host machine requires an ssh keypair to be setup. This can either be a keypair specific to this project or the re-use of an existing one.
+The host machine requires an ssh keypair to be setup and added to its ssh-agent.
+This can either be a keypair specific to this project or the re-use of an existing one.
 
 This keypair will be used to connect to guest machines, as well as being re-used on the guest machines themselves for ssh client connectivity via ssh-agent forwarding.
 
@@ -47,9 +48,12 @@ Note that vagrant does not support keys generated using the `Ed25519` algorithm,
 
 ```sh
 ssh-keygen -a 100 -o -t rsa -b 4096 -f ~/.ssh/id_rsa
+ssh-add ~/.ssh/id_rsa
 ```
 
-It is possible however to use an `rsa` key specifically for vagrant and then use your normal `Ed25519` keys via agent forwarding. This is achieved by adding the `Ed222159` key to your `ssh-agent` instead of the vagrant `rsa` key. This will then be used from the guest machine.
+It is however possible to use a key specifically for vagrant and then use your normal `Ed25519` keys via agent forwarding.
+This is achieved by adding the `Ed222159` key to your `ssh-agent` as well as the key used for vagrant.
+This will then be used from the guest machine.
 
 ### Ssh-agent forwarding
 
